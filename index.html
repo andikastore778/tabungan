@@ -1,0 +1,154 @@
+<!DOCTYPE html><html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Tabungan PC Impian</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', sans-serif;
+      background: #f3f4f6;
+      color: #111827;
+      padding: 20px;
+      max-width: 600px;
+      margin: auto;
+    }
+    h1 {
+      font-size: 24px;
+      margin-bottom: 10px;
+    }
+    .box {
+      background: white;
+      padding: 20px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+      margin-bottom: 20px;
+    }
+    button {
+      margin: 5px;
+      padding: 10px 20px;
+      font-size: 16px;
+      border-radius: 8px;
+      border: none;
+      background: #3b82f6;
+      color: white;
+      cursor: pointer;
+    }
+    button:hover {
+      background: #2563eb;
+    }
+    input {
+      padding: 8px;
+      border-radius: 6px;
+      border: 1px solid #ccc;
+    }
+    ul {
+      list-style: none;
+      padding: 0;
+    }
+    .item {
+      padding: 5px 0;
+      border-bottom: 1px solid #e5e7eb;
+    }
+    img {
+      max-width: 100%;
+      margin-top: 10px;
+      border-radius: 12px;
+    }
+  </style>
+</head>
+<body>
+  <h1> Tabungan PC Impian</h1>
+  <div class="box">
+    <p><strong>Total tabungan:</strong> Rp<span id="total">0</span></p>
+    <progress id="progress" max="7000000" value="0" style="width: 100%; height: 20px;"></progress><br>
+    <button onclick="addAmount(15000)">+15.000</button>
+    <button onclick="addAmount(20000)">+20.000</button>
+    <input type="number" id="customAmount" placeholder="Isi nominal"> <button onclick="addCustom()">Tambah</button>
+    <br><br>
+    <button onclick="confirmSubtract()" style="background:#f87171">Kurangi Tabungan</button>
+    <button onclick="testAlarm()" style="background:#10b981">Tes Alarm Maghrib</button>
+  </div>  <div class="box">
+    <h2> Riwayat</h2>
+    <ul id="history"></ul>
+  </div>  <div class="box">
+    <h2> Daftar Belanja PC</h2>
+    <ul>
+      <li class="item">Intel i3-10105F — Rp1.100.000</li>
+      <li class="item">GTX 1660 Super — Rp2.200.000</li>
+      <li class="item">RAM 16GB — Rp600.000</li>
+      <li class="item">SSD 250GB — Rp400.000</li>
+      <li class="item">HDD 1TB — Rp500.000</li>
+      <li class="item">PSU 500W — Rp300.000</li>
+      <li class="item">Casing Gaming — Rp400.000</li>
+      <li class="item">Monitor, Keyboard, Mouse — Rp1.000.000</li>
+    </ul>
+    <img src="https://files.catbox.moe/iv60hb.jpg" alt="Gambar PC Impian">
+  </div><audio id="sound-success" src="https://www.myinstants.com/media/sounds/success-fanfare-trumpets.mp3"></audio> <audio id="sound-sad" src="https://www.myinstants.com/media/sounds/sad-trombone.mp3"></audio> <audio id="sound-alarm" src="https://www.myinstants.com/media/sounds/alarm.mp3"></audio>
+
+  <script>
+    let total = 0;
+    let confirmSteps = 0;
+
+    function updateDisplay() {
+      document.getElementById('total').innerText = total.toLocaleString('id-ID');
+      document.getElementById('progress').value = total;
+    }
+
+    function playSound(id) {
+      const sound = document.getElementById(id);
+      if (sound) {
+        sound.currentTime = 0;
+        sound.play().catch(e => console.log('Sound error:', e));
+      }
+    }
+
+    function addAmount(amount) {
+      total += amount;
+      updateDisplay();
+      logHistory(`+ Rp${amount.toLocaleString('id-ID')}`);
+      playSound('sound-success');
+    }
+
+    function addCustom() {
+      const val = parseInt(document.getElementById('customAmount').value);
+      if (!isNaN(val) && val > 0) {
+        addAmount(val);
+        document.getElementById('customAmount').value = '';
+      }
+    }
+
+    function logHistory(msg) {
+      const li = document.createElement('li');
+      li.textContent = `${new Date().toLocaleString('id-ID')} - ${msg}`;
+      document.getElementById('history').prepend(li);
+    }
+
+    function confirmSubtract() {
+      confirmSteps++;
+      if (confirmSteps === 1) {
+        alert('Kamu yakin ingin mengurangi tabungan?');
+      } else if (confirmSteps === 2) {
+        alert('Yakin beneran?');
+      } else if (confirmSteps >= 3) {
+        let val = prompt('Masukkan jumlah yang ingin dikurangi:');
+        val = parseInt(val);
+        if (!isNaN(val) && val > 0 && val <= total) {
+          total -= val;
+          updateDisplay();
+          logHistory(`- Rp${val.toLocaleString('id-ID')}`);
+          playSound('sound-sad');
+        } else {
+          alert('Jumlah tidak valid atau melebihi total.');
+        }
+        confirmSteps = 0;
+      }
+    }
+
+    function testAlarm() {
+      playSound('sound-alarm');
+      alert('Ini alarm pengingat menabung! Maghrib sudah tiba!');
+    }
+
+    updateDisplay();
+  </script></body>
+      </html>
